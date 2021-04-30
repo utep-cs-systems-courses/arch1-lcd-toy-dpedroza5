@@ -37,6 +37,15 @@ void fillRectangle(u_char colMin, u_char rowMin, u_char width, u_char height,
   }
 }
 
+void RightFacingTriangle(int c, int r, u_char offset_r, u_char offset_c)
+{
+  for (r; r >= 0; r--) {
+    for (c = 0; c <= r; c++) {
+      drawPixel(offset_c + c, offset_r - r -1, COLOR_BROWN);
+      drawPixel(offset_c + c, offset_r + r -20, COLOR_BROWN);
+    }
+  }
+}
 /** Clear screen (fill with color)
  *  
  *  \param colorBGR The color to fill screen
@@ -94,6 +103,36 @@ void drawString5x7(u_char col, u_char row, char *string,
   }
 }
 
+void drawChar11x16(u_char rcol, u_char rrow, char c, 
+     u_int fgColorBGR, u_int bgColorBGR) 
+{
+  u_char col = 0;
+  u_char row = 0;
+  u_char bit = 0x01;
+  u_char oc = c - 0x20;
+
+  lcd_setArea(rcol, rrow, rcol + 10, rrow + 16); /* relative to requested col/row */
+  while (row < 17) {
+    while (col < 11) {
+      u_int colorBGR = (font_11x16[oc][col] & bit) ? fgColorBGR : bgColorBGR;
+      lcd_writeColor(colorBGR);
+      col++;
+    }
+    col = 0;
+    bit <<= 1;
+    row++;
+  }
+}
+
+void drawString11x16(u_char col, u_char row, char *string,
+		u_int fgColorBGR, u_int bgColorBGR)
+{
+  u_char cols = col;
+  while (*string) {
+    drawChar11x16(cols, row, *string++, fgColorBGR, bgColorBGR);
+    cols += 12;
+  }
+}
 
 /** Draw rectangle outline
  *  
