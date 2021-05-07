@@ -1,7 +1,5 @@
 	.arch msp430g2553
 	.p2align 1,0
-
-#include "lcdutils.h"
 	
 	.data
 	state:	 #1
