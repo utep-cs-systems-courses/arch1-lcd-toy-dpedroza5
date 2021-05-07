@@ -12,7 +12,9 @@ u_char nextStringOffset = 5;
 signed char Velocity = 1;
 
 short redrawScreen = 1;
-u_int fontFgColor = COLOR_GREEN;
+u_int fontFgColor;
+
+extern u_int color();
 
 void wdt_c_handler()
 {
@@ -23,7 +25,6 @@ void wdt_c_handler()
   dsecCount ++;
   if (secCount == 250) {
     secCount = 0;
-    fontFgColor = (fontFgColor == COLOR_GREEN) ? COLOR_RED : COLOR_GREEN;
     redrawScreen = 1;
   }
   if (dsecCount == 25) {
@@ -36,51 +37,15 @@ void wdt_c_handler()
     redrawScreen = 1;
   }
 }
-
-void main()
+void font_text(u_int fontFgColor)
 {
-  P1DIR |= LED_GREEN;/**< Green led on when CPU on */
-  P1OUT |= LED_GREEN;
-  configureClocks();
-  lcd_init();
-
-  enableWDTInterrupts();      /**< enable periodic interrupt */
-  or_sr(0x8);              /**< GIE (enable interrupts) */
-
-  clearScreen(COLOR_BLACK);
-  while (1) {/* forever */
-    if (redrawScreen) {
-      redrawScreen = 0;
-
-      switch_init();
-      if (switch1_state_down){
-	state1();
-      }
-      else if (switch2_state_down){
-	state2();
-      }
-      else if (switch3_state_down){
-	state3();
-      }
-      else if (switch4_state_down){
-	state4();
-      }
-      else{
-	clearScreen(COLOR_BLACK);
-      }
-
-      stringOffset = nextStringOffset;
-    }
-    P1OUT &= ~LED_GREEN;/* green off */
-    or_sr(0x10);/**< CPU OFF */
-    P1OUT |= LED_GREEN;/* green on */
-  }
+  drawString11x16(5,stringOffset, "my project", COLOR_BLACK, COLOR_BLACK);
+  drawString11x16(5,nextStringOffset, "my project", fontFgColor, COLOR_BLACK);
 }
 
 void state1() //creates the font
 {
-  drawString11x16(5,stringOffset, "My Project", COLOR_BLACK, COLOR_BLACK);
-  drawString11x16(5,nextStringOffset, "My Project", fontFgColor, COLOR_BLACK);
+  color();
   fillRectangle(60,55,10,5, COLOR_BROWN);
   fillRectangle(55,60,20,50, COLOR_BROWN);
   fillRectangle(45,110,40,5, COLOR_GREEN);
@@ -159,4 +124,41 @@ void state4() //mirrors the sword
   fillRectangle(100-nextStringOffset,80,5,20, COLOR_GREEN);
   fillRectangle(85-nextStringOffset,70,5,5, COLOR_GREEN);
   fillRectangle(85-nextStringOffset,105,5,5, COLOR_GREEN);
+}
+
+void default_state()
+{
+  clearScreen(COLOR_BLACK);
+}
+
+void main()
+{
+  P1DIR |= LED_GREEN;/**< Green led on when CPU on */
+  P1OUT |= LED_GREEN;
+  configureClocks();
+  lcd_init();
+  switch_init();
+  enableWDTInterrupts();      /**< enable periodic interrupt */
+  or_sr(0x8);              /**< GIE (enable interrupts) */
+
+  clearScreen(COLOR_BLACK);
+  while (1) {/* forever */
+    if (redrawScreen) {
+      redrawScreen = 0;
+      
+      switch(switch_state)
+      {
+      case 1: state1(); break;
+      case 2: state2(); break;
+      case 3: state3(); break;
+      case 4: state4(); break;
+      default: default_state(); break;
+      }
+
+      stringOffset = nextStringOffset;
+    }
+    P1OUT &= ~LED_GREEN;/* green off */
+    or_sr(0x10);/**< CPU OFF */
+    P1OUT |= LED_GREEN;/* green on */
+  }
 }

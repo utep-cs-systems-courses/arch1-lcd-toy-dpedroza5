@@ -18,10 +18,12 @@ install: libLcd.a
 	cp *.h ../h
 
 #additional rules for files
-main.elf: ${COMMON_OBJECTS} main.o p1_interrupt_handler.o wdt_handler.o switches.o libLcd.a
+main.elf: ${COMMON_OBJECTS} main.o p1_interrupt_handler.o wdt_handler.o switches.o jumpTable.o libLcd.a
 	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $^ -lTimer -lLcd 
 
 switches.o: switches.h
+
+jumpTable.o: jumpTable.s
 
 load: main.elf
 	msp430loader.sh $^

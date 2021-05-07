@@ -3,6 +3,7 @@
 
 char switch1_state_down, switch2_state_down, switch3_state_down, switch4_state_down, switch_state_changed; /* effectively boolean */
 
+u_int switch_state;
 static char 
 switch_update_interrupt_sense()
 {
@@ -28,8 +29,10 @@ switch_interrupt_handler()
 {
   char p2val = switch_update_interrupt_sense();
   switch1_state_down = (p2val & SW1) ? 0 : 1; /* 0 when SW1 is up */
-  switch2_state_down = (p2val & SW2) ? 0 : 1;
-  switch3_state_down = (p2val & SW3) ? 0 : 1;
-  switch4_state_down = (p2val & SW4) ? 0 : 1;
+  switch2_state_down = (p2val & SW2) ? 0 : 2;
+  switch3_state_down = (p2val & SW3) ? 0 : 3;
+  switch4_state_down = (p2val & SW4) ? 0 : 4;
   switch_state_changed = 1;
+
+  switch_state = switch1_state_down + switch2_state_down + switch3_state_down + switch4_state_down;
 }

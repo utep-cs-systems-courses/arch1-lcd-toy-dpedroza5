@@ -1,5 +1,6 @@
 #ifndef switches_included
 #define switches_included
+#include "lcdutils.h"
 
 #define SW1 BIT0		/* switches in P2 */
 #define SW2 BIT1
@@ -11,5 +12,7 @@ void switch_init();
 void switch_interrupt_handler();
 
 extern char switch1_state_down, switch2_state_down, switch3_state_down, switch4_state_down, switch_state_changed; /* effectively boolean */
+
+extern u_int switch_state;
 
 #endif // included
