@@ -52,15 +52,19 @@ default:
 	mov #1, &state
 	mov #0xFFFF, r12
 	call #font_text
+	pop r0
 GREEN:
 	add #1, &state
 	mov #0x07e0, r12
 	call #font_text
+	pop r0
 CYAN:
 	add #1, &state
 	mov #0xffe0, r12
 	call #font_text
+	pop r0
 PURPLE:
 	add #1, &state
 	mov #0xf114, r12
 	call #font_text
+	pop r0
