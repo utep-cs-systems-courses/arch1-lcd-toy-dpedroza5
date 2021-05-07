@@ -9,12 +9,23 @@ AS              = msp430-elf-gcc -mmcu=${CPU} -c
 
 all:main.elf
 
+libLcd.a: font-11x16.o lcdutils.o lcddraw.o
+	$(AR) crs $@ $^
+
+install: libLcd.a
+	mkdir -p ../h ../lib
+	mv $^ ../lib
+	cp *.h ../h
+
 #additional rules for files
-main.elf: ${COMMON_OBJECTS} main.o wdt_handler.o
+main.elf: ${COMMON_OBJECTS} main.o p1_interrupt_handler.o wdt_handler.o switches.o libLcd.a
 	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $^ -lTimer -lLcd 
+
+switches.o: switches.h
 
 load: main.elf
 	msp430loader.sh $^
 
 clean:
 	rm -f *.o *.elf
+

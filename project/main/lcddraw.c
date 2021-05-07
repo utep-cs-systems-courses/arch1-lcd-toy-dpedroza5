@@ -37,15 +37,16 @@ void fillRectangle(u_char colMin, u_char rowMin, u_char width, u_char height,
   }
 }
 
-void RightFacingTriangle(int c, int r, u_char offset_r, u_char offset_c)
+void RightFacingTriangle(int c, int r, u_char offset_r, u_char offset_c, u_int colorBGR)
 {
   for (r; r >= 0; r--) {
     for (c = 0; c <= r; c++) {
-      drawPixel(offset_c + c, offset_r - r -1, COLOR_BROWN);
-      drawPixel(offset_c + c, offset_r + r -20, COLOR_BROWN);
+      drawPixel(offset_c + c, offset_r - r -1, colorBGR);
+      drawPixel(offset_c + c, offset_r + r -20, colorBGR);
     }
   }
 }
+
 /** Clear screen (fill with color)
  *  
  *  \param colorBGR The color to fill screen
@@ -108,7 +109,7 @@ void drawChar11x16(u_char rcol, u_char rrow, char c,
 {
   u_char col = 0;
   u_char row = 0;
-  u_char bit = 0x01;
+  int bit = 0x0001;
   u_char oc = c - 0x20;
 
   lcd_setArea(rcol, rrow, rcol + 10, rrow + 16); /* relative to requested col/row */
